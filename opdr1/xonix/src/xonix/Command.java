@@ -28,6 +28,9 @@ abstract class Command extends AbstractAction implements ActionListener {
         }
     }
 
+    /**
+     * this is the AddMonsterball class which is used to spawn more enemies
+     */
     public class AddMonsterball extends Command {
         public AddMonsterball() {
         }
@@ -37,8 +40,11 @@ abstract class Command extends AbstractAction implements ActionListener {
         }
     }
 
-    public class DecreasCarspeed extends Command {
-        public DecreasCarspeed() {
+    /**
+     * this is the DecreaseCarspeed class which is used to decrease the speed of the player object
+     */
+    public class DecreaseCarspeed extends Command {
+        public DecreaseCarspeed() {
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -46,6 +52,9 @@ abstract class Command extends AbstractAction implements ActionListener {
         }
     }
 
+    /**
+     * this is the IncreaseCarspeed class which is used to increase the speed of the player object
+     */
     public class IncreaseCarspeed extends Command {
         public IncreaseCarspeed() {
         }
@@ -55,6 +64,9 @@ abstract class Command extends AbstractAction implements ActionListener {
         }
     }
 
+    /**
+     * this is the GoWest class which is used to make the player object go left
+     */
     public class GoWest extends Command {
         public GoWest() {
         }
@@ -64,6 +76,9 @@ abstract class Command extends AbstractAction implements ActionListener {
         }
     }
 
+    /**
+     * this is the GoEast class which is used to make the player object go right
+     */
     public class GoEast extends Command {
         public GoEast() {
         }
@@ -73,6 +88,9 @@ abstract class Command extends AbstractAction implements ActionListener {
         }
     }
 
+    /**
+     * this is the GoSouth class which is used to make the player object go down
+     */
     public class GoSouth extends Command {
         public GoSouth() {
         }
@@ -82,6 +100,9 @@ abstract class Command extends AbstractAction implements ActionListener {
         }
     }
 
+    /**
+     * this is the GoNorth class which is used to make the player object go up
+     */
     public class GoNorth extends Command {
         public GoNorth() {
         }
