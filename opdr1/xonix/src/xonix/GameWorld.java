@@ -13,12 +13,13 @@ public class GameWorld
     static final java.awt.Color PLAYER_COLOR = java.awt.Color.cyan;
     static final java.awt.Color MONSTER_COLOR = java.awt.Color.orange;
     static final java.awt.Color TICKET_COLOR = java.awt.Color.green;
-    static final int LEVEL_START = 1;
+    static private int LEVEL_START = 1;
     static final int CLOCK_START = (6 - LEVEL_START) * 2;
     static final int LIVES_START = 3;
     static final int CSCORE_START = 0;
     static final int RSCORE_START = (40 + LEVEL_START * 10) * 100;
     static final int TTIME_START = 6 - LEVEL_START;
+
 
     public final GameView gv;
     public final FieldSquares fss;
@@ -28,7 +29,14 @@ public class GameWorld
     public State state;
     private final java.util.Random random;
 
-    public GameWorld ()
+    private static GameWorld gameWorld = new GameWorld();
+
+    private GameWorld(){
+        this.random = new java.util.Random();
+        this.fss = FieldSquares.getInstance();
+    }
+
+   /* public GameWorld ()
     {
         this.random = new java.util.Random ();
         this.gv = new GameView ();
@@ -57,7 +65,7 @@ public class GameWorld
             }
         });
         this.play ();
-    }
+    }*/
 
     public void createMonsterballs ()
     {
