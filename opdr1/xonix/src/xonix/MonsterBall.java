@@ -1,8 +1,15 @@
 package xonix;
 
+import java.awt.geom.Point2D;
+
 class MonsterBall extends playerObject
 {
     private float radius;
+    private Point2D.Float prev;
+    private Point2D.Float next;
+    private FieldSquare fsprev;
+    private FieldSquare fsnext;
+
 
     public MonsterBall (final java.awt.geom.Point2D.Float loc, final java.awt.Color color, final int heading, final float speed, final float radius)
     {
@@ -28,27 +35,32 @@ class MonsterBall extends playerObject
 
     public boolean changeLocation (FieldSquares fss, State state, float delta)
     {
-        java.awt.geom.Point2D.Float prev = getLocation ();
-        java.awt.geom.Point2D.Float next = nextLocation (delta);
-        FieldSquare fsprev = fss.elementAt ((int) (prev.x / GameWorld.SQUARE_UNITS + 0.5), (int) (prev.y / GameWorld.SQUARE_UNITS + 0.5));
-        FieldSquare fsnext = fss.elementAt ((int) (next.x / GameWorld.SQUARE_UNITS + 0.5), (int) (next.y / GameWorld.SQUARE_UNITS + 0.5));
+        prev = getLocation ();
+        next = nextLocation (delta);
+        fsprev = fss.elementAt ((int) (prev.x / GameWorld.SQUARE_UNITS + 0.5), (int) (prev.y / GameWorld.SQUARE_UNITS + 0.5));
+        fsnext = fss.elementAt ((int) (next.x / GameWorld.SQUARE_UNITS + 0.5), (int) (next.y / GameWorld.SQUARE_UNITS + 0.5));
 
         if (fsprev.getColor () == GameWorld.LINE_COLOR || fsnext.getColor () == GameWorld.LINE_COLOR)
             return true;
 
+        Collision(fss);
+        getLocation ().setLocation (nextLocation (delta));
+        return false;
+    }
+
+    public void Collision(FieldSquares fss) {
         if (fsprev.getColor () != fsnext.getColor ())
         {
-            if (fss.elementAt ((int) (prev.x / GameWorld.SQUARE_UNITS + 0.5), (int) (prev.y / GameWorld.SQUARE_UNITS + 0.5)).getColor () != fss.elementAt ((int) (next.x / GameWorld.SQUARE_UNITS + 0.5), (int) (prev.y / GameWorld.SQUARE_UNITS + 0.5)).getColor ())
+            if (fsprev.getColor () != fss.elementAt ((int) (next.x / GameWorld.SQUARE_UNITS + 0.5), (int) (prev.y / GameWorld.SQUARE_UNITS + 0.5)).getColor ())
                 if (getHeading () < 180)
                     setHeading (180 - getHeading ());
                 else
                     setHeading (540 - getHeading ());
-            if (fss.elementAt ((int) (prev.x / GameWorld.SQUARE_UNITS + 0.5), (int) (prev.y / GameWorld.SQUARE_UNITS + 0.5)).getColor () != fss.elementAt ((int) (prev.x / GameWorld.SQUARE_UNITS + 0.5), (int) (next.y / GameWorld.SQUARE_UNITS + 0.5)).getColor ())
+            if (fsprev.getColor () != fss.elementAt ((int) (prev.x / GameWorld.SQUARE_UNITS + 0.5), (int) (next.y / GameWorld.SQUARE_UNITS + 0.5)).getColor ())
                 setHeading (360 - getHeading ());
         }
-        getLocation ().setLocation (nextLocation (delta));
-        return false;
     }
+
 
     @Override
     public String toString ()

@@ -5,7 +5,7 @@ package xonix;
  * claas: Car
  */
 
-public final class Car extends playerObject
+class Car extends playerObject
 {
     private static java.awt.geom.Point2D.Float loc = new java.awt.geom.Point2D.Float (GameWorld.SQUARE_LENGTH / 2 * GameWorld.SQUARE_UNITS, (GameWorld.SQUARE_LENGTH - 1) * GameWorld.SQUARE_UNITS);
     private static java.awt.Color color =  GameWorld.CAR_COLOR;
@@ -72,11 +72,21 @@ public final class Car extends playerObject
         java.awt.geom.Point2D.Float next = nextLocation (delta);
         FieldSquare fsprev = fss.elementAt ((int) (prev.x / GameWorld.SQUARE_UNITS + 0.5), (int) (prev.y / GameWorld.SQUARE_UNITS + 0.5));
         FieldSquare fsnext = fss.elementAt ((int) (next.x / GameWorld.SQUARE_UNITS + 0.5), (int) (next.y / GameWorld.SQUARE_UNITS + 0.5));
+        drawTrail();
+        getLocation ().setLocation (next);
+    }
+
+    public void drawTrail(){
         if (fsnext.getColor () == GameWorld.SQUARE_COLOR)
             fsnext.setColor (GameWorld.LINE_COLOR);
-        else if (fsnext.getColor () == GameWorld.PLAYER_COLOR && fsprev.getColor () == GameWorld.LINE_COLOR)
-            state.addcscore (fss.fillSquares ());
-        getLocation ().setLocation (next);
+    }
+
+    public boolean fillSquares(FieldSquares fss){
+        if (fsnext.getColor () == GameWorld.PLAYER_COLOR && fsprev.getColor () == GameWorld.LINE_COLOR){
+            GameWorld.getInstance().addScore(fss.fillSquares());
+            return true;
+        }
+        return false;
     }
 
     @Override

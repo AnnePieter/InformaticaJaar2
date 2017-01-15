@@ -2,17 +2,25 @@ package xonix;
 
 import javafx.geometry.Point3D;
 
-class FieldSquares
+import java.util.Arrays;
+import java.util.Iterator;
+
+class FieldSquares implements Iterable<FieldSquare[]>
 {
 
     private final FieldSquare[][] fsss;
     private final java.awt.Color[][] colors;
 
-    public FieldSquares ()
-    {
+    private static FieldSquares fieldSquares = new FieldSquares();
+
+    private FieldSquares(){
         fsss = new FieldSquare[GameWorld.SQUARE_LENGTH][GameWorld.SQUARE_LENGTH];
         setFields (GameWorld.PLAYER_COLOR, GameWorld.SQUARE_COLOR);
         colors = new java.awt.Color[GameWorld.SQUARE_LENGTH][GameWorld.SQUARE_LENGTH];
+    }
+
+    public static FieldSquares getInstance(){
+        return fieldSquares;
     }
 
     public FieldSquare elementAt (int i, int j)
@@ -136,6 +144,12 @@ class FieldSquares
             }
         }
         return size;
+    }
+
+    @Override
+    public Iterator<FieldSquare[]> iterator()
+    {
+        return Arrays.asList(fsss).iterator();
     }
 
     private void floodfill (int x, int y)

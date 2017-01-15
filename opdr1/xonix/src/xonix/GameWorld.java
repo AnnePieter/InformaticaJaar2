@@ -1,6 +1,6 @@
 package xonix;
 
-public class GameWorld
+public class GameWorld extends java.util.Observable
 {
 
     static final int SQUARE_LENGTH = 102;
@@ -21,51 +21,27 @@ public class GameWorld
     static final int TTIME_START = 6 - LEVEL_START;
 
 
-    public final GameView gv;
+    //public final GameView gv;
     public final FieldSquares fss;
     public java.util.ArrayList<MonsterBall> mbs;
     public java.util.ArrayList<TimeTicket> tts;
     public final Car car;
     public State state;
-    private final java.util.Random random;
+    public final java.util.Random random;
 
     private static GameWorld gameWorld = new GameWorld();
 
     private GameWorld(){
         this.random = new java.util.Random();
         this.fss = FieldSquares.getInstance();
+        createMonsterballs();
+        createTimeTickets();
+        this.car = Car.getInstance();
+        this.state = new State();
     }
-
-   /* public GameWorld ()
-    {
-        this.random = new java.util.Random ();
-        this.gv = new GameView ();
-        this.gv.setWorld (this);
-        this.fss = new FieldSquares ();
-        createMonsterballs ();
-        createTimeTickets ();
-        this.car = new Car (new java.awt.geom.Point2D.Float (SQUARE_LENGTH / 2 * SQUARE_UNITS, (SQUARE_LENGTH - 1) * SQUARE_UNITS), CAR_COLOR, 270, 50, SQUARE_UNITS, SQUARE_UNITS);
-        this.state = new State ();
-        gv.addKeyListener (new java.awt.event.KeyListener ()
-        {
-            @Override
-            public void keyTyped (java.awt.event.KeyEvent e)
-            {
-            }
-
-            @Override
-            public void keyPressed (java.awt.event.KeyEvent e)
-            {
-                execute (e.getKeyCode ());
-            }
-
-            @Override
-            public void keyReleased (java.awt.event.KeyEvent e)
-            {
-            }
-        });
-        this.play ();
-    }*/
+    public static GameWorld getInstance(){
+        return gameWorld;
+    }
 
     public void createMonsterballs ()
     {
@@ -83,18 +59,6 @@ public class GameWorld
             tts.add (new TimeTicket (new java.awt.geom.Point2D.Float (random.nextInt (SQUARE_LENGTH * SQUARE_UNITS - 30) + 15, random.nextInt (SQUARE_LENGTH * SQUARE_UNITS - 30) + 15), TICKET_COLOR, TTIME_START, 7, 7));
     }
 
-    public void play ()
-    {
-        gv.score.update ();
-        new javax.swing.Timer (GAME_TICK_DELAY, new java.awt.event.ActionListener ()
-        {
-            @Override
-            public void actionPerformed (java.awt.event.ActionEvent evt)
-            {
-                update ((float) (GAME_TICK_DELAY / 1000.0));
-            }
-        }).start ();
-    }
 
     public void update (float delta)
     {
@@ -109,16 +73,27 @@ public class GameWorld
                     break;
                 }
             car.changeLocation (fss, state, delta);
-            for (TimeTicket tt : tts)
-                if (tt.contains (car.getLocation ()))
-                {
-                    state.setClock (state.getClock () + tt.getSeconds ());
-                    tts.remove (tt);
-                    gv.score.update ();
-                    break;
-                }
+            //check time ticket collision
+            GameController.getInstance().new CollisionTimeticket().actionPerformed(null);
+
         }
-        gv.update ();
+        this.setChanged();
+        this.notifyObservers();
+    }
+
+    public boolean TimeTicketCollision(){
+        for (TimeTicket tt : tts)
+            if (tt.contains (car.getLocation ()))
+            {
+                state.setClock (state.getClock () + tt.getSeconds ());
+                tts.remove (tt);
+                return true;
+            }
+        return false;
+    }
+
+    public void addScore(int squares){
+        state.addcscore(squares);
     }
 
     public void reset ()
@@ -130,38 +105,8 @@ public class GameWorld
         this.state.reset ();
     }
 
-    public void execute (int keycode)
-    {
-        switch (keycode)
-        {
-            case java.awt.event.KeyEvent.VK_LEFT:
-                car.setHeading (180);
-                break;
-            case java.awt.event.KeyEvent.VK_UP:
-                car.setHeading (90);
-                break;
-            case java.awt.event.KeyEvent.VK_RIGHT:
-                car.setHeading (0);
-                break;
-            case java.awt.event.KeyEvent.VK_DOWN:
-                car.setHeading (270);
-                break;
-            case java.awt.event.KeyEvent.VK_SPACE:
-                if (state.isGameOver ())
-                    reset ();
-                break;
-            case java.awt.event.KeyEvent.VK_I:
-                car.setSpeed (car.getSpeed () + 5);
-                break;
-            case java.awt.event.KeyEvent.VK_K:
-                tts.add (new TimeTicket (new java.awt.geom.Point2D.Float (random.nextInt (SQUARE_LENGTH * SQUARE_UNITS - 30) + 15, random.nextInt (SQUARE_LENGTH * SQUARE_UNITS - 30) + 15), TICKET_COLOR, TTIME_START, 7, 7));
-                break;
-            case java.awt.event.KeyEvent.VK_L:
-                car.setSpeed (car.getSpeed () - 5);
-                break;
-            case java.awt.event.KeyEvent.VK_M:
-                mbs.add (new MonsterBall (new java.awt.geom.Point2D.Float (random.nextInt (SQUARE_LENGTH * SQUARE_UNITS - 30) + 15, random.nextInt (SQUARE_LENGTH * SQUARE_UNITS - 30) + 15), MONSTER_COLOR, random.nextInt (360), random.nextFloat () * 100 + 10, 6));
-                break;
-        }
+    public FieldSquares getFieldSquares(){
+        return fss;
     }
+
 }
